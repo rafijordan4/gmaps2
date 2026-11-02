@@ -1,0 +1,12 @@
+{
+  "name": "Game PS2",
+  "packageId": "com.gmaps2.game",
+  "mode": "auto",
+  "abis": ["arm64-v8a"],
+  "emulator": {
+    "repo": "https://github.com/jpd002/Play-.git",
+    "ref": "master",
+    "dir": null
+  },
+  "controls": { "opacity": 0.55, "haptics": true }
+}

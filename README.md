@@ -1,56 +1,35 @@
-# gmaps2
+# gmaps2 (versi Codespaces)
 
-ISO game PS2 -> APK dengan kontrol ala PS. Emulator: [Play!](https://github.com/jpd002/Play-) (open source, **tanpa BIOS**).
+ISO game PS2 -> APK dengan kontrol ala PS. Emulator: [Play!](https://github.com/jpd002/Play-) (tanpa BIOS).
 
-## Di Termux (build lewat GitHub Codespaces, tanpa bikin repo)
+## Pakai
 
-```bash
-pkg install nodejs git gh openssh
-gh auth login                      # login GitHub (akses codespace)
+1. Taruh semua isi folder ini di root repo GitHub lo, buka **Code -> Codespaces -> Create codespace**
+   (`.devcontainer` otomatis minta mesin 4-core, 64GB).
+2. **Drag file ISO** ke folder `iso/` di panel file kiri.
+3. (Opsional) taruh `icon.png` (persegi) di `assets/`, ganti nama game di `gmaps2.json`.
+4. Terminal:
+   ```bash
+   npm run doctor
+   npm run build
+   ```
+5. Hasil: `output/<nama>.apk` -> klik kanan -> Download.
 
-# pasang tool (dari folder gmaps2 ini)
-npm install -g .
-
-mkdir mygame && cd mygame
-gmaps2 init                        # taruh ISO di iso/ , icon.png opsional di assets/
-gmaps2 doctor
-gmaps2 build                       # otomatis jarak jauh karena Termux = ARM
-termux-open output/*.apk           # pasang
-```
-
-`gmaps2 build` di Termux: bikin/pakai codespace dari repo Play! (public), upload ISO, build di sana, download APK, lalu stop codespace. Build berikutnya memakai codespace yang sama (cache Gradle tetap ada).
-Kalau koneksi putus saat build, build di codespace tetap jalan: `gmaps2 fetch`.
-
-## Di Codespaces / Linux x86_64 (build lokal)
-
-```bash
-sudo apt-get install -y unzip curl      # biasanya sudah ada
-npm install -g .
-gmaps2 init && gmaps2 build             # SDK/NDK dipasang otomatis
-```
-
-## Cara kerja
-
-1. Scan `iso/`, pilih ISO terbesar
-2. Clone Play! (+ submodule), pasang SDK/NDK/CMake yang dibutuhkan
-3. Patch: ganti `VirtualPadView` bawaan dengan `PsControlsView` (input lewat `InputManager`), tambah `GmapsLauncherActivity` (langsung boot game), ganti nama app/applicationId/icon, ABI hanya `arm64-v8a`
-4. `gradlew assembleRelease` dengan keystore sendiri (`gmaps2.keystore`, disimpan supaya update APK tetap bisa menimpa)
-5. Hasil: `output/<nama>.apk`
+Build pertama lama (pasang SDK/NDK, clone Play!, kompilasi C++). Build berikutnya jauh lebih cepat.
 
 ## Mode ISO
 
 - `bundle`: ISO ikut di APK (otomatis kalau <= 1.5 GB), disalin sekali saat pertama dibuka
-- `external`: APK jadi launcher, pilih ISO sekali lewat file picker (otomatis kalau lebih besar)
+- `external`: pilih ISO sekali lewat file picker (otomatis kalau lebih besar)
 
-Paksa: `gmaps2 build --mode external`
+Paksa: `npm run build -- --mode external`
 
-## gmaps2.json
+## Cara kerja
 
-`name`, `packageId`, `mode`, `abis`, `controls.opacity/haptics`, `remote.repo/machine/displayName`, `emulator.repo/ref/dir`.
+Patch Play!: `VirtualPadView` diganti `PsControlsView` (input lewat `InputManager`), tambah `GmapsLauncherActivity` (langsung boot game), ganti nama/applicationId/icon, ABI hanya `arm64-v8a`, lalu `assembleRelease` dengan keystore sendiri (`gmaps2.keystore`, tidak masuk git).
 
 ## Catatan
 
-- Belum diuji build penuh di Codespace; yang sudah diuji: sintaks, `init`/`doctor`, dan patch terhadap source Play! asli.
-- Kuota Codespaces gratis terbatas (cek github.com/settings/billing); mesin 4-core memakai kuota 4x lebih cepat dari 2-core.
+- ISO, output, dan keystore ada di `.gitignore`, jangan di-commit.
 - Tombol PS di overlay membuka menu emulator (simpan state, pengaturan, keluar).
 - Cek lisensi Play! kalau APK mau dibagikan.
