@@ -1,0 +1,18 @@
+{
+  "name": "gmaps2",
+  "version": "0.1.0",
+  "description": "Bungkus ISO game PS2 + emulator + kontrol ala PS jadi APK, langsung dari GitHub Codespaces",
+  "bin": {
+    "gmaps2": "bin/gmaps2.js"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "templates"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "dependencies": {}
+}
